@@ -1,7 +1,9 @@
+import axios from 'axios';
 import express from 'express';
 
 import { Coin } from '../models/coin';
 import { CoinGeckoBaseResponse } from '../models/coingecko-base-response';
+import { EtherscanResponse } from '../models/etherscan-response';
 import { COINS } from '../utils/constants';
 import Utils from '../utils/utils';
 
@@ -19,9 +21,10 @@ router.get('/coins', async (_req, res) => {
     sparkline: false,
   };
   try {
+    const data = await CoinGeckoClient.
     const { data: ethData, code: ethCode, success: ethSuccess }: CoinGeckoBaseResponse = await CoinGeckoClient.coins.fetch(COINS.ETH.id, params);
-    const { data: slpData, code: slpCode, success: slpSuccess }: CoinGeckoBaseResponse = await CoinGeckoClient.coins.fetch(COINS.SLP.id, params);
-    const { data: axsData, code: axsCode, success: axsSuccess }: CoinGeckoBaseResponse = await CoinGeckoClient.coins.fetch(COINS.AXS.id, params);
+    const { data: slpData }: CoinGeckoBaseResponse = await CoinGeckoClient.coins.fetch(COINS.SLP.id, params);
+    const { data: axsData }: CoinGeckoBaseResponse = await CoinGeckoClient.coins.fetch(COINS.AXS.id, params);
 
     const coins: Coin[] = [Utils.mapCoinData(ethData), Utils.mapCoinData(slpData), Utils.mapCoinData(axsData)];
     if (ethSuccess) res.send(coins).status(200);
@@ -31,3 +34,12 @@ router.get('/coins', async (_req, res) => {
 });
 
 export default router;
+
+router.get('/eth-gas', async (req, res) => {
+  try {
+    const { data, status } = await axios.get(`https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=YourApiKeyToken `).;
+    if (status) res.send(data);
+  } catch (error) {
+    res.status(500).send(`An Error Occurred ${error}`);
+  }
+});

@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const axios_1 = __importDefault(require("axios"));
 const express_1 = __importDefault(require("express"));
 const constants_1 = require("../utils/constants");
 const utils_1 = __importDefault(require("../utils/utils"));
@@ -39,4 +40,14 @@ router.get('/coins', (_req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 }));
 exports.default = router;
+router.get('/eth-gas', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { data, status } = yield axios_1.default.get(`https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=YourApiKeyToken `);
+        if (status)
+            res.send(data);
+    }
+    catch (error) {
+        res.status(500).send(`An Error Occurred ${error}`);
+    }
+}));
 //# sourceMappingURL=main.js.map
